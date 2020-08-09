@@ -1,0 +1,156 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\hypersetup{colorlinks=true,linkcolor=black}
+\lstset{
+    basicstyle          =   \ttfamily,          % 基本代码风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    frame               =   lrtb,   % 显示边框
+}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{exercise}{Exercise}
+\newtheorem*{solution}{Solution}
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\postscript}[2]
+ {\setlength{\epsfxsize}{#2\hsize}
+  \centerline{\epsfbox{#1}}}
+
+\renewcommand{\baselinestretch}{1.0}
+
+\setlength{\oddsidemargin}{-0.365in}
+\setlength{\evensidemargin}{-0.365in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{10.1in}
+\setlength{\textwidth}{7in}
+\makeatletter \renewenvironment{proof}[1][Proof] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+\makeatletter
+\renewenvironment{solution}[1][Solution] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+
+\begin{document}
+\noindent
+
+%========================================================================
+\noindent\framebox[\linewidth]{\shortstack[c]{
+\Large{\textbf{Homework 06}}\vspace{1mm}\\
+CS307-Operating System (D), Chentao Wu, Spring 2020.}}
+\begin{center}
+\footnotesize{\color{blue}Name: 方泓杰 (Hongjie Fang)  \quad Student ID: 518030910150 \quad Email: galaxies@sjtu.edu.cn}
+\end{center}
+
+\begin{itemize}
+    \item (6.8) Race conditions are possible in many computer systems. Consider an online auction system where the current highest bid for each item must be maintained. A person who wishes to bid on an item calls the \texttt{bid(amount)} function, which compares the amount being bid to the current highest bid. If the amount exceeds the current highest bid, the highest bid is set to the new amount. This is illustrated below.
+\begin{lstlisting}[language=C++]
+    void bid(double amount) {
+        if (amount > highestBid)
+            highestBid = amount;
+    }
+\end{lstlisting}
+        Describe how a race condition is possible in this situation and what might be done to prevent the race condition from occurring.
+    \begin{solution}
+        Here I'll describe one possible race condition as follows.
+        \begin{itemize}
+        \item Suppose the current highest bid is $100$, that is, \texttt{highestBid = 100}.
+        \item There are two persons that wishes to bid on the item, and the prices of them are $101$ and $102$ respectively. So they call the function \texttt{bid(101)} and \texttt{bid(102)} at the same time.
+        \item Both of them satisfy the condition \texttt{amount > highestBid} in \texttt{if} instruction, so both of them will execute the instruction \texttt{highestBid = amount}.
+        \item If \texttt{bid(101)} execute this instruction after \texttt{bid(102)}, then the final result of \texttt{highestBid} will be modified to $101$, which is incorrect since highest bid should be $102$.
+        \item Therefore, a race condition happens and causes the wrong result.
+        \end{itemize}
+        Here are some methods to prevent the race condition from occurring.
+        \begin{itemize}
+        \item We can make the \texttt{bid(amount)} function \textbf{atomic} in hardware level to forbid executing two \texttt{bid(amount)} at the same time, which will prevent the race conditions from occurring.
+        \item We can use \textbf{a mutex lock or a semaphore} to prevent the race condition from occurring. Using this method, we can modify the code as follows (here we use a mutex lock).
+\begin{lstlisting}[language=C++]
+    mutex_lock lock;
+    void bid(double amount) {
+        lock.acquire();      /* acquire mutex lock */
+        if (amount > highestBid)
+            highestBid = amount;
+        lock.release();      /* release mutex lock */
+    }
+\end{lstlisting}
+        \end{itemize}
+    \end{solution}
+
+    \item (6.13) The first known correct software solution to the critical-section problem for two processes was developed by Dekker. The two process, $P_0$ and $P_1$, share the following variables:
+\begin{lstlisting}[language=C++]
+    boolean flag[2]; /* initially false */
+    int turn;
+\end{lstlisting}
+        The structure of process $P_i$ ($i = 0$ or $1$) is shown as follows. The other process is $P_j$ ($j = 1$ or $0$). Prove that the algorithm satisfies all three requirements for the critical-section problem.
+\begin{lstlisting}[language=C++]
+    while(true) {
+        flag[i] = true;
+        while (flag[j]) {
+            if (turn == j) {
+                flag[i] = false;
+                while (turn == j); /* wait and do nothing */
+                flag[i] = true;
+            }
+        }
+            /* critical section */
+        turn = j;
+        flag[i] = false;
+            /* remainder section */
+    }
+\end{lstlisting}
+    \begin{proof}
+    Here I'll prove that the algorithm meets all three requirements.
+    \begin{itemize}
+    \item \textbf{(Mutual Exclusion)} Mutual exclusion requirement is met through the variables \texttt{turn} and \texttt{flag}. Before one process enters the critical section, the \texttt{flag} of this process must be \texttt{true}, and the \texttt{flag} of the other process must be \texttt{false}. If two processes come in the same time, then both of them will enter the \texttt{while} loop. Since there is only one value of \texttt{turn}, only one process can satisfy the condition of \texttt{if} instruction and execute the following instructions, which will change the \texttt{flag} of current process to \texttt{false} and wait. Therefore, the other process can enter the critical section while the current process is waiting. After the other process finishes executing critical section, it will change \texttt{turn} and its \texttt{flag} so that the current process can stop waiting in the inner \texttt{while} loop and start executing critical section. Therefore, there can be one process at most executing the critical section in the same time, which satisfies the requirement of mutual exclusion.
+    \item \textbf{(Progress)} Progress requirement is met also through the variables \texttt{turn} and \texttt{flag}. If a process wants to enter the critical section, then it will set its \texttt{flag} to \texttt{true}, and if \texttt{turn} is also the current process, then it will enter in critical section. After executing critical section, the process will change its \texttt{flag} to \texttt{false} indicating the latest progress that it has finished executing the critical section, and the process will also change \texttt{turn} to let the waiting process (if there is a waiting process) come in and execute the critical section.
+    \item \textbf{(Bounded Waiting)} If two processes come in the same time, then both of them will enter the \texttt{while} loop. Since there is only one value of \texttt{turn}, only one process can satisfy the condition of \texttt{if} instruction and execute the following instructions, which will change the \texttt{flag} of current process to \texttt{false} and wait. Therefore, the other process can enter the critical section while the current process is waiting. After the other process finishes executing critical section, it will change \texttt{turn} and its \texttt{flag} so that the current process can stop waiting in the inner \texttt{while} loop and start executing critical section. Hence, the waiting time of the current process is bounded since the execution speed is non-zero.
+    \end{itemize}
+    \end{proof}
+
+    \item (6.21) A multi-threaded web server wishes to keep track of the number of requests it services (known as \textbf{hits}). Consider the two following strategies to prevent a race condition on the variable hits. The rist strategy is to use a basic mutex lock when updating hits:
+\begin{lstlisting}[language=C++]
+    int hits;
+    mutex_lock hit_lock;
+
+    hit_lock.acquire();
+    hits ++;
+    hit_lock.release();
+\end{lstlisting}
+        A second strategy is to use an atomic integer:
+\begin{lstlisting}
+    atomic_t hits;
+    atomic_inc(&hits);
+\end{lstlisting}
+    Explain which of these two strategies is more efficient.
+    \begin{solution}
+    \textbf{Atomic integer} strategy is more efficient than the basic mutex lock strategy. The reasons are as follows.
+    \begin{itemize}
+    \item The atomic integer is implemented in hardware level and it will ensure that only at most one instruction can operate the variable at the same time. Therefore, if many processes want to operate the variable at the same time, there will be a relative order to execute the \texttt{atomic\_inc(\&hits)} to make sure the data won't be operated twice at the same time (i.e., the data is correct). This strategy will \textbf{not suspend} other processes while executing instructions of atomic variables, since it is implemented in hardware bus level.
+    \item The basic mutex lock is implemented in software level and it will also ensure that at most one instruction can enter the critical section, which is between the \texttt{acquire()} and \texttt{release()} instructions, at the same time. But it will suspend other process while one process is executing the critical section. This will take more time because of the cost of suspending and awakening the process (including context switch time and so on).
+    \item The mutex lock requires system calls, which will take more time.
+    \end{itemize}
+    In summary, the atomic integer strategy is more efficient, but the implementation of it will be more complicated since it is in hardware level.
+    \end{solution}
+\end{itemize}
+%========================================================================
+\end{document}

@@ -1,0 +1,132 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\hypersetup{colorlinks=true,linkcolor=black}
+\lstset{
+    basicstyle          =   \ttfamily,          % 基本代码风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    frame               =   lrtb,   % 显示边框
+}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{exercise}{Exercise}
+\newtheorem*{solution}{Solution}
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\postscript}[2]
+ {\setlength{\epsfxsize}{#2\hsize}
+  \centerline{\epsfbox{#1}}}
+
+\renewcommand{\baselinestretch}{1.0}
+
+\setlength{\oddsidemargin}{-0.365in}
+\setlength{\evensidemargin}{-0.365in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{10.1in}
+\setlength{\textwidth}{7in}
+\makeatletter \renewenvironment{proof}[1][Proof] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+\makeatletter
+\renewenvironment{solution}[1][Solution] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+
+\begin{document}
+\noindent
+
+%========================================================================
+\noindent\framebox[\linewidth]{\shortstack[c]{
+\Large{\textbf{Homework 03}}\vspace{1mm}\\
+CS307-Operating System (D), Chentao Wu, Spring 2020.}}
+\begin{center}
+\footnotesize{\color{blue}Name: 方泓杰 (Hongjie Fang)  \quad Student ID: 518030910150 \quad Email: galaxies@sjtu.edu.cn}
+\end{center}
+
+\begin{itemize}
+    \item (3.1) Using the following program, explain what the output will be at LINE A.
+    \begin{lstlisting}[language=c++]
+    # include <sys/types.h>
+    # include <stdio.h>
+    # include <unistd.h>
+    int value = 5;
+    int main() {
+        pid_t pid;
+        pid = fork();
+        if (pid == 0) {   /* child process */
+            value += 15;
+            return 0;
+        } else if (pid > 0) {   /* parent process */
+            wait(NULL);
+            printf("PARENT: value = \%d", value);   /* LINE A */
+            return 0;
+        }
+    }
+    \end{lstlisting}
+  \begin{solution} The output of LINE A will be as follows.
+  \begin{lstlisting}
+  PARENT: value = 5
+  \end{lstlisting}
+  The child process will copy the data from the parent process, so the modification of ``value'' in the child process have no influence on the ``value'' in the parent process. Therefore, the ``value'' in the parent process will remain to be 5.
+  \end{solution}
+
+  \item (3.2) Including the initial parent process, how many processes are created by the following program?
+    \begin{lstlisting}[language=C++]
+    # include <stdio.h>
+    # include <unistd.h>
+    int main() {
+        /* fork a child process */
+        fork();
+        /* fork another child process */
+        fork();
+        /* and fork another */
+        fork();
+        return 0;
+    }
+    \end{lstlisting}
+  \begin{solution}
+    Suppose the initial parent process is called $P$. In the first ``fork()'', it will create a child process, and let us call it $A$. The second ``fork()'' will be executed in both $P$ and $A$, and create a child process for $P$ and for $A$ respectively, called $B$ and $C$. The third ``fork()'' will be executed in $P$, $A$, $B$ and $C$, and create a child process for each of them respectively, called $D$, $E$, $F$ and $G$. So there are total $8$ processes ($P,A,B,C,D,E,F,G$) created by the following program, including the initial parent process $P$.
+  \end{solution}
+
+  \item (3.4) Some computer systems provide multiple register sets. Describe what happens when a context switch occurs if the new context is already loaded into one of the register sets. What happens if the new context is in memory rather than in a register set and all the register sets are in use.
+  \begin{solution}
+  If the new context is already loaded into one of the register sets, then CPU simply changes its \textbf{current-register-set pointer} to the set which contains the new context, and this operation only takes a little time. If the context is in memory, then one of the contexts in a register set will be substituted with the new context in the memory, and the original one will be the moved to the memory. This process takes more time, since accessing memory is much slower than accessing registers. And the average time of this process also depends on the replacement strategies of the register sets.
+  \end{solution}
+
+  \item (3.8) Describe the actions taken by a kernel to context-switch processes.
+  \begin{solution}
+  Actions taken by a kernel to context-switch processes are as follows.
+  \begin{itemize}
+  \item The operating system saves the registers and process state into the PCB (Process Control Block) of the current process to make sure that it can be executed normally in the future.
+  \item The operating system then invokes the process scheduler to find out which process will be executed next.
+  \item The operating system retrieves the state and restores the registers of the next process from its PCB. Then the next process will be executed from where it was previously interrupted.
+  \item Some special operations should be done in this process, such as flushing the instruction cache (i.e., clearing the instructions of the old process and putting some instructions of the new process in it).
+  \end{itemize}
+  \end{solution}
+
+  \item (3.10) Explain the role of the \textbf{init} (or \textbf{systemd}) process on UNIX and Linux systems in regard to process termination.
+  \begin{solution}
+  \textbf{init} is the ancestor of all other processes. When a process executes \textbf{exit()}, it will not disappear immediately. Instead, it will move to the zombie state in a short period of time. It needs its parent process to invoke a call to \textbf{wait()} to release the resources thoroughly. If its parent process will not invoke \textbf{wait()}, it will become a zombie process as long as its parent process is still running. After its parent process terminates without calling \textbf{wait()}, the \textbf{init} process will become the new parent of the zombie process. The \textbf{init} process will periodically invokes \textbf{wait()} in order to release the resources of the zombie processes. Similarly, if a process is still running but its parent process is terminated, which is called an orphan process, then the \textbf{init} process will become the new parent of the orphan process and help it terminate and release the resources. Therefore, the \textbf{init} (or \textbf{systemd}) process will clear the zombie processes and orphan processes to make the system cleaner and tidier.
+  \end{solution}
+\end{itemize}
+%========================================================================
+\end{document}

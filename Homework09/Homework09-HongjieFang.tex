@@ -1,0 +1,178 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\hypersetup{colorlinks=true,linkcolor=black}
+\lstset{
+    basicstyle          =   \ttfamily,          % 基本代码风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt 等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top 上面
+    frame               =   lrtb,   % 显示边框
+}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{exercise}{Exercise}
+\newtheorem*{solution}{Solution}
+\newtheorem*{example}{Example}
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\postscript}[2]
+ {\setlength{\epsfxsize}{#2\hsize}
+  \centerline{\epsfbox{#1}}}
+
+\renewcommand{\baselinestretch}{1.0}
+
+\setlength{\oddsidemargin}{-0.365in}
+\setlength{\evensidemargin}{-0.365in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{10.1in}
+\setlength{\textwidth}{7in}
+\makeatletter \renewenvironment{proof}[1][Proof] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+\makeatletter
+\renewenvironment{solution}[1][Solution] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+
+\begin{document}
+\noindent
+
+%========================================================================
+\noindent\framebox[\linewidth]{\shortstack[c]{
+\Large{\textbf{Homework 09}}\vspace{1mm}\\
+CS307-Operating System (D), Chentao Wu, Spring 2020.}}
+\begin{center}
+\footnotesize{\color{blue}Name: 方泓杰 (Hongjie Fang)  \quad Student ID: 518030910150 \quad Email: galaxies@sjtu.edu.cn}
+\end{center}
+
+\begin{itemize}
+  \item (9.6) Given six memory partitions of 300 KB, 600 KB, 350 KB, 200 KB, 750 KB and 125 KB (in order), how would the first-fit, best-fit and worst-fit algorithms place processes of size 115 KB, 500 KB, 358 KB, 200 KB, and 375 KB (in order)?
+  \begin{solution} Here are the situations of three algorithms.
+  \begin{itemize}
+  \item \textbf{(First-fit Algorithm)} Here are the situations displayed in order.
+  \begin{enumerate}[i. ]
+  \item 115 KB will be put in the 300 KB memory partition, then the rest of the memory partitions are (185 KB, 600 KB, 350 KB, 200 KB, 750 KB, 125 KB);
+  \item 500 KB will be put in the 600 KB memory partition, then the rest of the memory partitions are (185 KB, 100 KB, 350 KB, 200 KB, 750 KB, 125 KB);
+  \item 358 KB will be put in the 750 KB memory partition, then the rest of the memory partitions are (185 KB, 100 KB, 350 KB, 200 KB, 392 KB, 125 KB);
+  \item 200 KB will be put in the 350 KB memory partition, then the rest of the memory partitions are (185 KB, 100 KB, 150 KB, 200 KB, 392 KB, 125 KB);
+  \item 375 KB will be put in the 392 KB memory partition, then the rest of the memory partitions are (185 KB, 100 KB, 150 KB, 200 KB, 17 KB, 125 KB).
+  \end{enumerate}
+  \item \textbf{(Best-fit Algorithm)} Here are the situations displayed in order.
+  \begin{enumerate}[i. ]
+  \item 115 KB will be put in the 125 KB memory partition, then the rest of the memory partitions are (300 KB, 600 KB, 350 KB, 200 KB, 750 KB, 10 KB);
+  \item 500 KB will be put in the 600 KB memory partition, then the rest of the memory partitions are (300 KB, 100 KB, 350 KB, 200 KB, 750 KB, 10 KB);
+  \item 358 KB will be put in the 750 KB memory partition, then the rest of the memory partitions are (300 KB, 100 KB, 350 KB, 200 KB, 392 KB, 10 KB);
+  \item 200 KB will be put in the 200 KB memory partition, then the rest of the memory partitions are (300 KB, 100 KB, 350 KB, 0 KB, 392 KB, 10 KB);
+  \item 375 KB will be put in the 392 KB memory partition, then the rest of the memory partitions are (300 KB, 100 KB, 350 KB, 0 KB, 17 KB, 10 KB).
+  \end{enumerate}
+  \item \textbf{(Worst-fit Algorithm)} Here are the situations displayed in order.
+  \begin{enumerate}[i. ]
+  \item 115 KB will be put in the 750 KB memory partition, then the rest of the memory partitions are (300 KB, 600 KB, 350 KB, 200 KB, 635 KB, 125 KB);
+  \item 500 KB will be put in the 635 KB memory partition, then the rest of the memory partitions are (300 KB, 600 KB, 350 KB, 200 KB, 135 KB, 125 KB);
+  \item 358 KB will be put in the 600 KB memory partition, then the rest of the memory partitions are (300 KB, 242 KB, 350 KB, 200 KB, 135 KB, 125 KB);
+  \item 200 KB will be put in the 350 KB memory partition, then the rest of the memory partitions are (300 KB, 242 KB, 150 KB, 200 KB, 135 KB, 125 KB);
+  \item 375 KB can not be put in any of the current memory partitions, since it is larger than any partition. Therefore, the process of size 375 KB \underline{must wait} until there is a memory partition whose capacity is larger than its size.
+  \end{enumerate}
+  \end{itemize}
+  \end{solution}
+
+  \item (9.7) Assuming a 1-KB page size, what are the page numbers and offsets for the following address references (provided as decimal numbers):
+      \begin{enumerate}[a. ]
+      \item 3085;
+      \item 42095;
+      \item 215201;
+      \item 650000;
+      \item 2000001.
+      \end{enumerate}
+  \begin{solution}
+  The page size is 1 KB, which means the offsets have 10 binary bits. Therefore, we can derive the following address references by transforming them into binary mode.
+  \begin{enumerate}[a. ]
+  \item $(3085)_{10} = (1100\ 0000\ 1101)_2$; hence,
+      \begin{displaymath}
+      \begin{aligned}
+      & \textrm{offset} = (00\ 0000\ 1101)_2 = 13, \\
+      & \textrm{page number} = (11)_2 = 3.
+      \end{aligned}
+      \end{displaymath}
+  \item $(42095)_{10} = (1010\ 0100\ 0110\ 1111)_2$; hence,
+      \begin{displaymath}
+      \begin{aligned}
+      & \textrm{offset} = (00\ 0110\ 1111)_2 = 111, \\
+      & \textrm{page number} = (10\ 1001)_2 = 41.
+      \end{aligned}
+      \end{displaymath}
+  \item $(215201)_{10} = (0011\ 0100\ 1000\ 1010\ 0001)_2$; hence,
+      \begin{displaymath}
+      \begin{aligned}
+      & \textrm{offset} = (00\ 1010\ 0001)_2 = 161, \\
+      & \textrm{page number} = (00\ 1101\ 0010)_2 = 210.
+      \end{aligned}
+      \end{displaymath}
+  \item $(650000)_{10} = (1001\ 1110\ 1011\ 0001\ 0000)_2$; hence,
+      \begin{displaymath}
+      \begin{aligned}
+      & \textrm{offset} = (11\ 0001\ 0000)_2 = 784, \\
+      & \textrm{page number} = (10\ 0111\ 1010)_2 = 634.
+      \end{aligned}
+      \end{displaymath}
+  \item $(2000001)_{10} = (0001\ 1110\ 1000\ 0100\ 1000\ 0001)_2$; hence,
+      \begin{displaymath}
+      \begin{aligned}
+      & \textrm{offset} = (00\ 1000\ 0001)_2 = 129, \\
+      & \textrm{page number} = (00\ 0111\ 1010\ 0001)_2 = 1953.
+      \end{aligned}
+      \end{displaymath}
+  \end{enumerate}
+  \end{solution}
+
+  \item (9.9) Consider a logical address space of 256 pages with a 4-KB page size, mapped onto a physical memory of 64 frames.
+      \begin{enumerate}[a. ]
+      \item How many bits are required in the logical address?
+      \item How many bits are required in the physical address?
+      \end{enumerate}
+  \begin{solution}
+    The 4-KB page size means an offset of 12 binary bits.
+    \begin{enumerate}[a. ]
+    \item The logical address space of 256 pages, which means a page number of 8 binary bits. Therefore, $12 + 8 = 20$ bits are required in the logical address.
+    \item The physical address space of 64 frames, which means a frame number of 6 binary bits. Therefore, total $12 + 6 = 18$ bits are required in the physical address.
+    \end{enumerate}
+  \end{solution}
+
+  \item (9.10) Consider a computer system with a 32-bit logical address and 4-KB page size. The system supports up to 512 MB of physical memory. How many entries are there in each of the following?
+      \begin{enumerate}[a. ]
+      \item A conventional, single-level page table;
+      \item An inverted page table.
+      \end{enumerate}
+  \begin{solution}
+    The 4-KB page size means an offset of 12 binary bits. 512 MB of physical memory means the physical address of 29 binary bits. Therefore,
+    \begin{itemize}
+    \item A page number is represented by $32 - 12 = 20$ binary bits, which means the logical address space of $2^{20}$ pages;
+    \item A frame number is represented by $29 - 12 = 17$ binary bits, which means the physical address space of $2^{17}$ frames.
+    \end{itemize}
+    Hence, we can derive the number of entries in each situation.
+    \begin{enumerate}[a. ]
+    \item \textbf{(A conventional, single-level page table)} The number of entries in a conventional, single-level page table should equal to the total page number of the logical address space, which is $2^{20} = 1\mathrm{M} = 1048576$;
+    \item \textbf{(An inverted page table)} The number of entries in an inverted page table should equal to the total frame number of the physical address space, which is $2^{17} = 128 \mathrm{K} = 131072$.
+    \end{enumerate}
+  \end{solution}
+\end{itemize}
+%========================================================================
+\end{document}

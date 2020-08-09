@@ -1,0 +1,146 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\hypersetup{colorlinks=true,linkcolor=black}
+\lstset{
+    basicstyle          =   \ttfamily,          % 基本代码风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt 等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top 上面
+    frame               =   lrtb,   % 显示边框
+}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{exercise}{Exercise}
+\newtheorem*{solution}{Solution}
+\newtheorem*{example}{Example}
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\postscript}[2]
+ {\setlength{\epsfxsize}{#2\hsize}
+  \centerline{\epsfbox{#1}}}
+
+\renewcommand{\baselinestretch}{1.0}
+
+\setlength{\oddsidemargin}{-0.365in}
+\setlength{\evensidemargin}{-0.365in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{10.1in}
+\setlength{\textwidth}{7in}
+\makeatletter \renewenvironment{proof}[1][Proof] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+\makeatletter
+\renewenvironment{solution}[1][Solution] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+
+\begin{document}
+\noindent
+
+%========================================================================
+\noindent\framebox[\linewidth]{\shortstack[c]{
+\Large{\textbf{Homework 11}}\vspace{1mm}\\
+CS307-Operating System (D), Chentao Wu, Spring 2020.}}
+\begin{center}
+\footnotesize{\color{blue}Name: 方泓杰 (Hongjie Fang)  \quad Student ID: 518030910150 \quad Email: galaxies@sjtu.edu.cn}
+\end{center}
+
+\begin{itemize}
+  \item (11.13) Suppose that a disk drive has $5000$ cylinders, numbered $0$ to $4999$. The drive is currently serving a request at cylinder $2150$, and the previous request was at cylinder $1805$. The queue of pending request, in FIFO order, is:
+      \begin{displaymath}
+      2069; 1212; 2296; 2800; 544; 1618; 356; 1523; 4965; 3681
+      \end{displaymath}
+      Starting from the current head position, what is the total distance (in cylinders) that the disk arm moves to satisfy all the pending requests for each of the following disk-scheduling algorithms?
+      \begin{enumerate}[a. ]
+      \item FCFS;
+      \item SCAN;
+      \item C-SCAN.
+      \end{enumerate}
+      \begin{solution}
+      We know that the drive is currently serving a request at cylinder $2150$, and the previous request was at cylinder $1805$. Hence, the arm is moving in the direction from $0$ to $4999$. Therefore, the answers to the sub-questions are as follows.
+      \begin{enumerate}[a. ]
+      \item \textbf{(FCFS)} The order in which the drive will serve the requests is as follows.
+          \begin{displaymath}
+          2069; 1212; 2296; 2800; 544; 1618; 356; 1523; 4965; 3681
+          \end{displaymath}
+          Hence, we can calculate the total distance as follows.
+          \begin{displaymath}
+          \begin{aligned}
+          \textrm{total distance} &= (2150 - 2069) + (2069 - 1212) + (2296 - 1212) + (2800 - 2296) \\
+          & +(2800 - 544) +(1618 - 544) + (1618 - 356) + (1523 - 356) \\
+          & +(4965 - 1523) + (4965 - 3681) \\
+          & = 13011 \textrm{ (cylinders) }
+          \end{aligned}
+          \end{displaymath}
+          Therefore, the total distance that the disk arm moves to satisfy all the pending requests for \underline{FCFS disk-scheduling algorithm} is \underline{$13011$ cylinders}.
+      \item \textbf{(SCAN)} The order in which the drive will serve the requests is as follows.
+          \begin{displaymath}
+          2296; 2800; 3681; 4965; 2069; 1618; 1523; 1212; 544; 356 
+          \end{displaymath}
+          Hence, we can calculate the total distance as follows.
+          \begin{displaymath}
+          \textrm{total distance} = (4999 - 2150) + (4999 - 356) = 7492 \textrm{ (cylinders) }
+          \end{displaymath}
+          Therefore, the total distance that the disk arm moves to satisfy all the pending requests for \underline{SCAN disk-scheduling algorithm} is \underline{$7492$ cylinders}.
+      \item \textbf{(C-SCAN)} The order in which the drive will serve the requests is as follows.
+          \begin{displaymath}
+          2296; 2800; 3681; 4965; 356; 544; 1212; 1523; 1618; 2069
+          \end{displaymath}
+          Hence, we can calculate the total distance as follows.
+          \begin{displaymath}
+          \textrm{total distance} = (4999 - 2150) + (4999 - 0) + (2069 - 0) = 9917 \textrm{ (cylinders) }
+          \end{displaymath}
+          Therefore, the total distance that the disk arm moves to satisfy all the pending requests for \underline{C-SCAN disk-scheduling algorithm} is \underline{$9917$ cylinders}.
+      \end{enumerate}
+      \end{solution}
+  \item (11.20) Consider a RAID level 5 organization comprising five disks, with the parity for sets of four blocks on four disks stored on the fifth disk. How many blocks are accessed in order to perform the following?
+      \begin{enumerate}[a. ]
+      \item A write of one block of data;
+      \item A write of seven continuous blocks of data.
+      \end{enumerate}
+      \begin{solution}
+      Here are the answers to the sub-questions.
+      \begin{enumerate}[a. ]
+      \item If we only write one block of data, the process is as follows.
+      \begin{itemize}
+      \item Read the corresponding parity block;
+      \item Read the old data in the target block;
+      \item Calculate the new data of the corresponding parity block by comparing the differences between the old data and the new data and combining the result with the original parity block;
+      \item Write the new data into the corresponding parity block;
+      \item Write the new data into the target block. 
+      \end{itemize}
+      So if we only write one block of data, we need to access the target block and the corresponding parity block twice (one time for reading the data and one time for writing the data). Therefore, \textbf{\underline{the total access number is $4$ blocks}}.
+      \item If we write seven continuous blocks of data, then the process may be as follows. Notice here we \textbf{\underline{assume that the blocks are arranged in four-blocks-alignment}}, so seven continuous blocks only need two parity blocks.
+      \begin{itemize}
+      \item Calculate the new data of the corresponding parity block of the first four target blocks using the new data of target blocks;
+      \item Write the new data into the corresponding parity block of the first four target blocks;
+      \item Write the new data into the first four continuous target blocks;
+      \item Read the data of the 8th block (the block right after the seven continuous target blocks);
+      \item Calculate the new data of the corresponding parity block of the last three target blocks and the 8th block by combining the new data of target blocks and the data of the 8th block;
+      \item Write the new data into the corresponding parity block of the last three target blocks and the 8th block;
+      \item Write the new data into the last three continuous target blocks.
+      \end{itemize}
+      So if we write seven continuous block of data, under the previous alignment assumption, we need to access all the target blocks once, the 8th block once, two parity blocks once. Therefore, \textbf{\underline{the total access number is $10$ blocks}}.
+      \end{enumerate}
+      \end{solution}
+\end{itemize}
+%========================================================================
+\end{document}

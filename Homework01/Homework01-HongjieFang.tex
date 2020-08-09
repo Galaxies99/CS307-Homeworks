@@ -1,0 +1,113 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\hypersetup{colorlinks=true,linkcolor=black}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{exercise}{Exercise}
+\newtheorem*{solution}{Solution}
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\postscript}[2]
+ {\setlength{\epsfxsize}{#2\hsize}
+  \centerline{\epsfbox{#1}}}
+
+\renewcommand{\baselinestretch}{1.0}
+
+\setlength{\oddsidemargin}{-0.365in}
+\setlength{\evensidemargin}{-0.365in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{10.1in}
+\setlength{\textwidth}{7in}
+\makeatletter \renewenvironment{proof}[1][Proof] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+\makeatletter
+\renewenvironment{solution}[1][Solution] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+
+\begin{document}
+\noindent
+
+%========================================================================
+\noindent\framebox[\linewidth]{\shortstack[c]{
+\Large{\textbf{Homework 01}}\vspace{1mm}\\
+CS307-Operating System (D), Chentao Wu, Spring 2020.}}
+\begin{center}
+\footnotesize{\color{blue}Name: ·½γό½ά (Hongjie Fang)  \quad Student ID: 518030910150 \quad Email: galaxies@sjtu.edu.cn}
+\end{center}
+
+\begin{itemize}
+    \item (1.1) What are the three main purposes of an operating system?
+    \begin{solution} The three main purposes are as follows.
+    \begin{enumerate}[(1)]
+    \item \textbf{To allocate the resource.} A computer system has many resources that may be required to solve a problem. The operating system acts as the manager of these resources.
+    \item \textbf{To control the devices and other programs.} An operating system is a control program which manages the execution of user programs to prevent error and improper use of the computer. It is especially concerned with the control of I/O devices.
+    \item \textbf{To provide an environment for other programs.} An operating system provides an environment within which other programs can do useful work.
+    \end{enumerate}
+    \end{solution}
+
+    \item (1.3) What is the main difficulty that a programmer must overcome in writing an operating system for a real-time environment?
+    \begin{solution}
+        A real-time system has well-defined, fixed time constraints. So the main difficulty is the system should make \textbf{a correct response} to the users \textbf{in time}, or the real-time system may crash. Therefore, when writing a real-time operating system, the designer should make sure that the algorithms and technologies they use will not make the response time exceed the time limit.
+    \end{solution}
+
+    \item (1.5) How does the distinction between kernel mode and user mode function as a rudimentary form of protection (security)?
+    \begin{solution}
+        Some instructions can be executed, and some devices can be accessed, only in kernel mode. And only the system is in kernel mode, it can control the interrupts. The user mode provide an environment for user applications to be executed, but when the user application need a system service which is relatively dangerous, the system will switch to kernel mode to fulfill the request in a safer environment.
+    \end{solution}
+
+    \item (1.6) Which of the following instruction should be privileged?
+    \begin{enumerate}[a.]
+    \item Set value of timer.
+    \item Read the clock.
+    \item Clear memory.
+    \item Issue a trap instruction.
+    \item Turn off interrupts.
+    \item Modify entries in device-status table.
+    \item Switch from user to kernel mode.
+    \item Access I/O device.
+    \end{enumerate}
+    \begin{solution}
+        Instructions that relate to I/O control, timer management, interrupt management should be privileged. So the instructions \textbf{a,c,e,f and h} should be privileged, that is, be executed only in kernel mode.
+    \end{solution}
+
+    \item (1.10) Give two reasons why caches are useful. What problems do they solve? What problems do they cause? If a cache can be made as large as the device for which it is caching (for instance, as large as a disk), why not make it that large and eliminate the device?
+    \begin{solution} The reasons are listed as follows.
+    \begin{enumerate}[(i)]
+    \item Caches are useful when two or more components with different transferring speed need to exchange data.
+    \item Caches are useful when we access some data frequently. Owing to their high speed, the data access can be efficient.
+    \end{enumerate}
+    The cache solve the \textbf{data exchange problem} of components with different transferring speed by acting as an \textbf{intermediary} and provides a buffer of intermediate speed between the components. If the faster device finds the data it needs in the cache, it can use them and do not have to wait for the slower device.
+
+    As a result, the data in the caches should be updated when the original data is updated. And that cause the \textbf{data synchronization problem} in multiprocessor environment and distributed environment. When there are many sub-environments, the same data can be stored in several caches, or even in several computers. If different programs, or different computers use the data or update the data at the same time, it may cause the problem.
+
+    If a cache can be made as large as the device for which it is caching, we can make it eliminate the device \textbf{only if it satisfies the following conditions}.
+    \begin{enumerate}[(i)]
+    \item The expense of an cache is \textbf{affordable}.
+    \item The cache and the device should have \textbf{equivalent state-saving capacity}. For instance, if we want to use an cache to eliminate a disk, then the data in the cache can not get lost when the power is off.
+    \end{enumerate}
+    \end{solution}
+
+    \item (1.11) Distinguish between the client-server and peer-to-peer models of distributed system.
+    \begin{solution}
+        \textbf{The client-server model} distinguishes the roles of client and server. The client requests services from the server, and the server provides the services to the client. 
+
+        \textbf{The peer-to-peer model} doesn't have the strict roles of client and server. All the computers in the peer-to-peer model can be server, client, or both. A computer may request services from other computers, and may provide services to other computers.
+    \end{solution}
+\end{itemize}
+%========================================================================
+\end{document}

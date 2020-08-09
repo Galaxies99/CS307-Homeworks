@@ -1,0 +1,390 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\hypersetup{colorlinks=true,linkcolor=black}
+\lstset{
+    basicstyle          =   \ttfamily,          % 基本代码风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    frame               =   lrtb,   % 显示边框
+}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{exercise}{Exercise}
+\newtheorem*{solution}{Solution}
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\postscript}[2]
+ {\setlength{\epsfxsize}{#2\hsize}
+  \centerline{\epsfbox{#1}}}
+
+\renewcommand{\baselinestretch}{1.0}
+
+\setlength{\oddsidemargin}{-0.365in}
+\setlength{\evensidemargin}{-0.365in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{10.1in}
+\setlength{\textwidth}{7in}
+\makeatletter \renewenvironment{proof}[1][Proof] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+\makeatletter
+\renewenvironment{solution}[1][Solution] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+
+\begin{document}
+\noindent
+
+%========================================================================
+\noindent\framebox[\linewidth]{\shortstack[c]{
+\Large{\textbf{Homework 05}}\vspace{1mm}\\
+CS307-Operating System (D), Chentao Wu, Spring 2020.}}
+\begin{center}
+\footnotesize{\color{blue}Name: 方泓杰 (Hongjie Fang)  \quad Student ID: 518030910150 \quad Email: galaxies@sjtu.edu.cn}
+\end{center}
+
+\begin{itemize}
+    \item (5.4) Consider the following set of processes, with the length of the CPU burst time given in milliseconds:
+
+    \begin{table}[htbp]
+    \centering
+    \begin{tabular}{ccc}
+    \hline
+    Process & Burst Time & Priority \\
+    \hline
+    $P_1$ & $2$ & $2$ \\
+    $P_2$ & $1$ & $1$ \\
+    $P_3$ & $8$ & $4$ \\
+    $P_4$ & $4$ & $2$ \\
+    $P_5$ & $5$ & $3$ \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+    The processes are assumed to have arrived in the order $P_1, P_2, P_3, P_4, P_5$, all at time $0$.
+
+    \begin{enumerate}
+    \item[a. ] Draw four Gantt charts that illustrate the execution of these processes using the following scheduling algorithms: FCFS, SJF, non-preemptive priority (a larger priority number implies a higher priority), and RR (quantum = 2).
+    \item[b. ] What is the turnaround time of each process for each of the scheduling algorithms in part a?
+    \item[c. ] What is the waiting time of each process for each of these scheduling algorithms?
+    \item[d. ] Which of the algorithms results in the minimum average waiting time (over all processes)?
+    \end{enumerate}
+
+    \begin{solution} Here are my solutions. \textit{\color{purple}Default unit: millisecond (ms)}.
+    \begin{enumerate}
+    \item[a. ] The four Gantt charts are as follows (Fig.~\ref{fig1}).
+        \begin{figure}[htbp]
+                \centering
+                \subfigure[Gantt chart of FCFS algorithm] {
+                    \begin{minipage}[t]{0.8\linewidth}
+                        \centering
+                        \includegraphics[width=4.8in]{p1-FCFS.png}
+                    \end{minipage}
+                    \label{fig:1a}
+                }
+
+                \subfigure[Gantt chart of SJF algorithm] {
+                    \begin{minipage}[t]{0.8\linewidth}
+                        \centering
+                        \includegraphics[width=4.8in]{p1-SJF.png}
+                    \end{minipage}
+                    \label{fig:1b}
+                }
+
+                \subfigure[Gantt chart of non-preemptive priority algorithm] {
+                    \begin{minipage}[t]{0.8\linewidth}
+                        \centering
+                        \includegraphics[width=4.8in]{p1-priority.png}
+                    \end{minipage}
+                    \label{fig:1c}
+                }
+
+                \subfigure[Gantt chart of RR algorithm (with quantum = $2$)] {
+                    \begin{minipage}[t]{0.8\linewidth}
+                        \centering
+                        \includegraphics[width=4.8in]{p1-RR.png}
+                    \end{minipage}
+                    \label{fig:1d}
+                }
+                \caption{Gantt charts of four different algorithms}\label{fig1}
+        \end{figure}
+    \item[b. ] According to Gantt charts in Fig.~\ref{fig1}, we can calculate the turnaround time of each process for each of the scheduling algorithms. Let $tT_i$ denote the turnaround time of process $P_i$.
+        \begin{itemize}
+        \item \textbf{(FCFS)} According to Fig.\ref{fig:1a}, we know:
+            \begin{displaymath}
+            \begin{aligned}
+            & tT_1 = 2 - 0 = 2, & \quad \quad & tT_2 = 3 - 0 = 3, \\
+            & tT_3 = 11 - 0 = 11, & \quad \quad & tT_4 = 15 - 0 = 15, \\
+            & tT_5 = 20 - 0 = 20.
+            \end{aligned}
+            \end{displaymath}
+        \item \textbf{(SJF)} According to Fig.\ref{fig:1b}, we know:
+            \begin{displaymath}
+            \begin{aligned}
+            & tT_1 = 3 - 0 = 3, & \quad \quad & tT_2 = 1 - 0 = 1, \\
+            & tT_3 = 20 - 0 = 20, & \quad \quad & tT_4 = 7 - 0 = 7, \\
+            & tT_5 = 12 - 0 = 12.
+            \end{aligned}
+            \end{displaymath}
+        \item \textbf{(non-preemptive priority)} According to Fig.\ref{fig:1c}, we know:
+            \begin{displaymath}
+            \begin{aligned}
+            & tT_1 = 15 - 0 = 15, & \quad \quad & tT_2 = 20 - 0 = 20, \\
+            & tT_3 = 8 - 0 = 8, & \quad \quad & tT_4 = 19 - 0 = 19, \\
+            & tT_5 = 13 - 0 = 13.
+            \end{aligned}
+            \end{displaymath}
+        \item \textbf{(RR with quantum = 2)} According to Fig.\ref{fig:1d}, we know:
+            \begin{displaymath}
+            \begin{aligned}
+            & tT_1 = 2 - 0 = 2, & \quad \quad & tT_2 = 3 - 0 = 3, \\
+            & tT_3 = 20 - 0 = 20, & \quad \quad & tT_4 = 13 - 0 = 13, \\
+            & tT_5 = 12 - 0 = 18.
+            \end{aligned}
+            \end{displaymath}
+        \end{itemize}
+    \item[c. ] According to Gantt charts in Fig.~\ref{fig1}, we can calculate the waiting time of each process for each of the scheduling algorithms. Let $tW_i$ denote the waiting time of process $P_i$.
+        \begin{itemize}
+        \item \textbf{(FCFS)} According to Fig.\ref{fig:1a}, we know:
+            \begin{displaymath}
+            \begin{aligned}
+            & tW_1 = 0 - 0 = 0, & \quad \quad & tW_2 = 2 - 0 = 2, \\
+            & tW_3 = 3 - 0 = 3, & \quad \quad & tW_4 = 11 - 0 = 11, \\
+            & tW_5 = 15 - 0 = 15.
+            \end{aligned}
+            \end{displaymath}
+        \item \textbf{(SJF)} According to Fig.\ref{fig:1b}, we know:
+            \begin{displaymath}
+            \begin{aligned}
+            & tW_1 = 1 - 0 = 1, & \quad \quad & tW_2 = 0 - 0 = 0, \\
+            & tW_3 = 12 - 0 = 12, & \quad \quad & tW_4 = 3 - 0 = 3, \\
+            & tW_5 = 7 - 0 = 7.
+            \end{aligned}
+            \end{displaymath}
+        \item \textbf{(non-preemptive priority)} According to Fig.\ref{fig:1c}, we know:
+            \begin{displaymath}
+            \begin{aligned}
+            & tW_1 = 13 - 0 = 13, & \quad \quad & tW_2 = 19 - 0 = 19, \\
+            & tW_3 = 0 - 0 = 0, & \quad \quad & tW_4 = 15 - 0 = 15, \\
+            & tW_5 = 8 - 0 = 8.
+            \end{aligned}
+            \end{displaymath}
+        \item \textbf{(RR with quantum = 2)} According to Fig.\ref{fig:1d}, we know:
+            \begin{displaymath}
+            \begin{aligned}
+            & tW_1 = 0 - 0 = 0, \\
+            & tW_2 = 2 - 0 = 2, \\
+            & tW_3 = (3-0) + (9-5) + (15-11) + (18-17) = 12, \\
+            & tW_4 = (5-0) + (11-7) = 9, \\
+            & tW_5 = (7-0) + (13-9) + (17-15) = 13.
+            \end{aligned}
+            \end{displaymath}
+        \end{itemize}
+    \item[d. ] In problem c, we have calculated the waiting time of each process for each of the scheduling algorithms. We can calculate the average waiting time for each algorithm now.
+        \begin{displaymath}
+        \begin{aligned}
+        & tW_{FCFS} = \frac{1}{5}\cdot (0+2+3+11+15) = 6.2, \\
+        & tW_{SJF} = \frac{1}{5}\cdot (1+0+12+3+7) = 4.6, \\
+        & tW_{priority} = \frac{1}{5}\cdot (13+19+0+15+8) = 11.0, \\
+        & tW_{RR} = \frac{1}{5}\cdot (0+2+12+9+13) = 7.2. \\
+        \end{aligned}
+        \end{displaymath}
+        Therefore, we know that $tW_{SJF} < tW_{FCFS} < tW_{RR} < tW_{priority}$. Thus, the \textbf{SJF algorithm} results in the minimum average waiting time (over all processes).
+    \end{enumerate}
+    \end{solution}
+
+    \item (5.5) The following processes are being scheduled using a preemptive, round-robin scheduling algorithm.
+
+    \begin{table}[htbp]
+    \centering
+    \begin{tabular}{cccc}
+    \hline
+    Process & Priority & Burst & Arrival \\
+    \hline
+    $P_1$ & $40$ & $20$ & $0$ \\
+    $P_2$ & $30$ & $25$ & $25$ \\
+    $P_3$ & $30$ & $25$ & $30$ \\
+    $P_4$ & $35$ & $15$ & $60$ \\
+    $P_5$ & $5$ & $10$ & $100$ \\
+    $P_6$ & $10$ & $10$ & $105$ \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+    Each process is assigned a numerical priority, with a higher number indicating a higher relative priority. In addition to the processes listed below, the system also has an \textbf{idle task} (which consumes no CPU resources and is identified as $P_{idle}$). This task has priority $0$ and is scheduled whenever the system has no other available processes to run. The length of a time quantum is $10$ units. If a process is preempted by a higher-priority process, the preempted process is placed at the end of the queue.
+    \begin{enumerate}
+    \item[a. ] Show the scheduling order of the processes using a Gantt chart.
+    \item[b. ] What is the turnaround time for each process?
+    \item[c. ] What is the waiting time for each process?
+    \item[d. ] What is the CPU utilization rate?
+    \end{enumerate}
+
+    \begin{solution} Here are my solutions.
+    \begin{enumerate}
+    \item[a. ] The Gantt chart of the scheduling order of processes is as follows (Fig.~\ref{fig2}).
+        \begin{figure}[htbp]
+          \centering
+          \includegraphics[width=5.7in]{p2.png}
+          \caption{The Gantt chart of the scheduling order of processes}\label{fig2}
+        \end{figure}
+
+    \item[b. ] According to Fig.~\ref{fig2}, we can calculate the turnaround time of each process as follows. Let $tT_i$ denote the turnaround time of process $P_i$.
+    \begin{displaymath}
+    \begin{aligned}
+    & tT_1 = 20-0 = 20, & \quad \quad & tT_2 = 80-25 = 55, \\
+    & tT_3 = 90-30 = 60, & \quad \quad & tT_4 = 75-60 = 15, \\
+    & tT_5 = 120-100 = 20, & \quad \quad & tT_6 = 115-105 = 10.
+    \end{aligned}
+    \end{displaymath}
+    \item[c. ] According to Fig.~\ref{fig2}, we can calculate the waiting time of each process as follows. Let $tW_i$ denote the waiting time of process $P_i$.
+    \begin{displaymath}
+    \begin{aligned}
+    & tW_1 = 0 - 0 = 0, \\
+    & tW_2 = (25 - 25) + (45 - 35) + (75 - 55) = 30, \\
+    & tW_3 = (35 - 30) + (55 - 45) + (80 - 60) = 35, \\
+    & tW_4 = 60 - 60 = 0, \\
+    & tW_5 = (100 - 100) + (115 - 105) = 10, \\
+    & tW_6 = 105 - 105 = 0.
+    \end{aligned}
+    \end{displaymath}
+    \item[d. ] According to Fig.~\ref{fig2}, we use $120$ units of time to execute the processes totally. Only $15$ units of time is used to execute $P_{idle}$, which consumes no CPU resources. Therefore, the CPU utilization rate can be calculated as follows (Eqn.~\eqref{eq1}).
+    \begin{equation}
+    \mathrm{CPU\ utilization\ rate} = \frac{120 - 15}{120} \times 100 \% = 87.5\%
+    \label{eq1}
+    \end{equation}
+    \end{enumerate}
+    \end{solution}
+
+    \item (5.10) The traditional UNIX scheduler enforces an inverse relationship between priority numbers and priorities: the higher the number, the lower the priority. The scheduler recalculates process priorities once per second using the following function:
+    \begin{displaymath}
+    \mathrm{Priority} = \frac{\mathrm{recent\ CPU\ usage}}{2} + \mathrm{base}
+    \end{displaymath}
+    where $\mathrm{base} = 60$ and $\mathrm{recent\ CPU\ usage}$ refers to a value indicating how often a process has used the CPU since priorities were last recalculated.
+
+    Assume that recent CPU usage for process $P_1$ is $40$, for process $P_2$ is $18$, and for process $P_3$ is $10$. What will be the new priorities for these three processes when priorities are recalculated? Based on this information, does the traditional UNIX scheduler raise or lower the relative priority of a CPU-bound process?
+
+    \begin{solution}
+    Let $p_i$ denote the new priority of process $P_i$. Then we can calculate $p_i$ as follows.
+    \begin{displaymath}
+    \begin{aligned}
+    & p_1 = \frac{\mathrm{recent\ CPU\ usage}_{P_1}}{2} + \mathrm{base} = \frac{40}{2} + 60 = 80\\
+    & p_2 = \frac{\mathrm{recent\ CPU\ usage}_{P_2}}{2} + \mathrm{base} = \frac{18}{2} + 60 = 69\\
+    & p_3 = \frac{\mathrm{recent\ CPU\ usage}_{P_3}}{2} + \mathrm{base} = \frac{10}{2} + 60 = 65
+    \end{aligned}
+    \end{displaymath}
+
+    The original priority $p'_i$ of each process $P_i$ has a relation with its recent CPU usage. According to the CPU scheduling knowledge, we can assume they have the following relation (Eqn.~\eqref{eq2}).
+
+    \begin{equation}
+    p'_i = k \cdot \mathrm{recent\ CPU\ usage}_{P_i} + b \quad \quad (k,b \in \mathbb{R}, \quad k \geq 1)
+    \label{eq2}
+    \end{equation}
+
+    Thus, the original relative priority of process $P_i$ and $P_j$ is $\left| p'_i - p'_j \right|$, and the current relative priority of process $P_i$ and $P_j$ is $\left| p_i - p_j \right|$. Hence,
+
+    \begin{equation}
+    \begin{aligned}
+    \frac{\left| p_i - p_j \right|}{\left| p'_i - p'_j \right|} & = \frac{\left|\left(\frac{1}{2} \cdot \mathrm{recent\ CPU\ usage}_{P_i} + \mathrm{base} \right) - \left(\frac{1}{2} \cdot \mathrm{recent\ CPU\ usage}_{P_j} + \mathrm{base} \right) \right|}{\left| \left(k \cdot \mathrm{recent\ CPU\ usage}_{P_i} + b \right)- \left( k \cdot \mathrm{recent\ CPU\ usage}_{P_j} + b \right) \right|} \\
+    & = \frac{1}{2k} \frac{\left| \mathrm{recent\ CPU\ usage}_{P_i} - \mathrm{recent\ CPU\ usage}_{P_j}\right|}{\left| \mathrm{recent\ CPU\ usage}_{P_i} - \mathrm{recent\ CPU\ usage}_{P_j}\right|} \\
+    & \leq \frac{1}{2}
+    \end{aligned}
+    \label{eq3}
+    \end{equation}
+
+    Equation \eqref{eq3} tells us that the relative priority of process $P_i$ and $P_j$ is reduced by at least a half. Therefore, the traditional UNIX scheduler lower the relative priority of a CPU-bound process.
+    \end{solution}
+
+    \item (5.18) The following processes are being scheduled using a preemptive, priority-based, round-robin scheduling algorithm.
+
+    \begin{table}[h]
+    \centering
+    \begin{tabular}{cccc}
+    \hline
+    Process & Priority & Burst & Arrival \\
+    \hline
+    $P_1$ & $8$ & $15$ & $0$ \\
+    $P_2$ & $3$ & $20$ & $0$ \\
+    $P_3$ & $4$ & $20$ & $20$ \\
+    $P_4$ & $4$ & $20$ & $25$ \\
+    $P_5$ & $5$ & $5$ & $45$ \\
+    $P_6$ & $5$ & $15$ & $55$ \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+    Each process is assigned a numerical priority, with a higher number indicating a higher relative priority. The scheduler will execute the highest-priority process. For processes with the same priority, a round-robin scheduler will be used with a time quantum of $10$ units. If a process is preempted by a higher-priority process, the preempted process is placed at the end of the queue.
+    \begin{enumerate}
+    \item[a. ] Show the scheduling order of the processes using a Gantt chart.
+    \item[b. ] What is the turnaround time for each process?
+    \item[c. ] What is the waiting time for each process?
+    \end{enumerate}
+
+    \begin{solution} Here are my solutions.
+    \begin{enumerate}
+    \item[a. ] The Gantt chart of the scheduling order of processes is as follows (Fig.~\ref{fig3}).
+        \begin{figure}[htbp]
+          \centering
+          \includegraphics[width=4.7in]{p3.png}
+          \caption{The Gantt chart of the scheduling order of processes}\label{fig3}
+        \end{figure}
+    \item[b. ] According to Fig.~\ref{fig3}, we can calculate the turnaround time of each process as follows. Let $tT_i$ denote the turnaround time of process $P_i$.
+    \begin{displaymath}
+    \begin{aligned}
+    & tT_1 = 15-0 = 15, & \quad \quad & tT_2 = 95-0 = 95, \\
+    & tT_3 = 75-20 = 55, & \quad \quad & tT_4 = 80-25 = 55, \\
+    & tT_5 = 50-45 = 5, & \quad \quad & tT_6 = 70-55 = 15.
+    \end{aligned}
+    \end{displaymath}
+    \item[c. ] According to Fig.~\ref{fig3}, we can calculate the waiting time of each process as follows. Let $tW_i$ denote the waiting time of process $P_i$.
+    \begin{displaymath}
+    \begin{aligned}
+    & tW_1 = 0 - 0 = 0, \\
+    & tW_2 = (15 - 0) + (80 - 20) = 75, \\
+    & tW_3 = (20 - 20) + (40 - 30) + (70 - 45) = 35, \\
+    & tW_4 = (30 - 25) + (50 - 40) + (75 - 55) = 35, \\
+    & tW_5 = 45 - 45 = 0, \\
+    & tW_6 = 55 - 55 = 0.
+    \end{aligned}
+    \end{displaymath}
+    \end{enumerate}
+    \end{solution}
+
+    \item (5.20) Which of the following scheduling algorithms could result in starvation?
+    \begin{enumerate}
+    \item[a. ] First-come, first-served;
+    \item[b. ] Shortest job first;
+    \item[c. ] Round robin;
+    \item[d. ] Priority.
+    \end{enumerate}
+
+    \begin{solution}
+        Only \textbf{Shortest job first} and \textbf{Priority-based} scheduling algorithms could result in starvation. Here are the explanations.
+        \begin{enumerate}
+        \item[a. ] First-come, first-served scheduling algorithm can guarantee that the processes are executed in their coming order. Thus, each of the processes will be executed when the processes coming before it all finish executing. Therefore, First-come, first-served scheduling algorithm cannot result in starvation.
+        \item[b. ] {\color{purple}Shortest-job first can result in starvation.} Assume there is a process $P_1$ whose burst time is $20$ ms, and there is another process $P_2$ coming every $10$ ms, whose burst time is $10$ ms. Then the CPU will be fully occupied with process $P_2$ in all time. Thus, process $P_1$ will never be executed, which indicates that Shortest-job-first scheduling algorithm can result in starvation.
+        \item[c. ] Round-robin scheduling algorithm can guarantee that every process will be executed after the previous processes finish executing. Therefore, Round-robin scheduling algorithm cannot result in starvation.
+        \item[d. ] {\color{purple}Priority-based scheduling algorithm can result in starvation.} Assume there are two processes $P_1$ and $P_2$ with burst time of $20$ ms and $10$ ms respectively. The priority of process $P_2$ is higher than the priority of process $P_1$, and the process $P_2$ will come every $10$ ms. Then the CPU will be fully occupied with process $P_2$ in all time. Thus, process $P_1$ will never be executed, which indicates that Priority-based scheduling algorithm can result in starvation.
+        \end{enumerate}
+    \end{solution}
+\end{itemize}
+%========================================================================
+\end{document}

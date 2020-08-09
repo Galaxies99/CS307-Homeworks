@@ -1,0 +1,304 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\hypersetup{colorlinks=true,linkcolor=black}
+\lstset{
+    basicstyle          =   \ttfamily,          % 基本代码风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt 等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top 上面
+    frame               =   lrtb,   % 显示边框
+}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{exercise}{Exercise}
+\newtheorem*{solution}{Solution}
+\newtheorem*{example}{Example}
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\postscript}[2]
+ {\setlength{\epsfxsize}{#2\hsize}
+  \centerline{\epsfbox{#1}}}
+
+\renewcommand{\baselinestretch}{1.0}
+
+\setlength{\oddsidemargin}{-0.365in}
+\setlength{\evensidemargin}{-0.365in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{10.1in}
+\setlength{\textwidth}{7in}
+\makeatletter \renewenvironment{proof}[1][Proof] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+\makeatletter
+\renewenvironment{solution}[1][Solution] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+
+\begin{document}
+\noindent
+
+%========================================================================
+\noindent\framebox[\linewidth]{\shortstack[c]{
+\Large{\textbf{Homework 10}}\vspace{1mm}\\
+CS307-Operating System (D), Chentao Wu, Spring 2020.}}
+\begin{center}
+\footnotesize{\color{blue}Name: 方泓杰 (Hongjie Fang)  \quad Student ID: 518030910150 \quad Email: galaxies@sjtu.edu.cn}
+\end{center}
+
+\begin{itemize}
+  \item (10.5) Consider the page table for a system with 12-bit virtual and physical addresses and 256-byte pages.
+
+        \begin{table}[htbp]
+        \centering
+        \begin{tabular}{|c|c|}
+        \hline
+        Page & Page Frame \\
+        \hline
+        $0$ & $-$ \\
+        $1$ & $2$ \\
+        $2$ & $C$ \\
+        $3$ & $A$ \\
+        $4$ & $-$ \\
+        $5$ & $4$ \\
+        $6$ & $3$ \\
+        $7$ & $-$ \\
+        $8$ & $B$ \\
+        $9$ & $0$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+      The list of free page frames is $D,E,F$ (that is, $D$ is at the head of the list, $E$ is second, and $F$ is last). A dash for a page frame indicates that the page is not in the memory.
+
+      Convert the following virtual addresses to their equivalent physical addresses in hexadecimal. All numbers are given in hexadecimal.
+      \begin{enumerate}[i. ]
+      \item $9EF$;
+      \item $111$;
+      \item $700$;
+      \item $0FF$.
+      \end{enumerate}
+
+      \begin{solution}
+      According to the problem descriptions, the address is $12$-bit, which is $3$-hexadecimal-bit; and the page offset is $8$-bit, which is $2$-hexadecimal-bit. Therefore, the page number and the page frame number is $4$-bit, which is $1$-hexadecimal-bit. Therefore, we can convert the virtual addresses according to the given mapping.
+      \begin{enumerate}[i. ]
+      \item $9EF$ in virtual address corresponds to \underline{$0EF$ in physical address};
+      \item $111$ in virtual address corresponds to \underline{$211$ in physical address};
+      \item Page $7$ does not correspond to any page frame in the mapping, so we get a free page frame from the given list and add a mapping $7 \rightarrow D$ in the mapping; therefore, $700$ in virtual address corresponds to \underline{$D00$ in physical address};
+      \item Page $0$ does not correspond to any page frame in the mapping, so we get a free page frame from the given list and add a mapping $0 \rightarrow E$ in the mapping; therefore, $0FF$ in virtual address corresponds to \underline{$EFF$ in physical address}.
+      \end{enumerate}
+      \end{solution}
+  \clearpage
+  \item (10.7) Consider the two-dimensional array \texttt{A}
+  \begin{lstlisting}[language=c++]
+  int A[][] = new int [100][100];
+  \end{lstlisting}
+  where \texttt{A[0][0]} is at location $200$ in a paged memory system with pages of size $200$. A small process that manipulates the matrix resides in page $0$ (locations $0$ to $199$). Thus, every instruction fetch will be from page $0$.
+
+  For three page frames, how many page faults are generated by the following array-initialization loops? Use LRU replacement, and assume that page frame $1$ contains the process and the other two are initially empty.
+  \begin{enumerate}[a. ]
+  \item The first array-initialization loop is as follows.
+  \begin{lstlisting}
+  for (int j = 0; j < 100; j++)
+    for (int i = 0; i < 100; i++)
+      a[i][j] = 0;
+  \end{lstlisting}
+  \item The second array-initialization loop is as follows.
+  \begin{lstlisting}
+  for (int i = 0; i < 100; i++)
+    for (int j = 0; j < 100; j++)
+      a[i][j] = 0;
+  \end{lstlisting}
+  \end{enumerate}
+  \begin{solution} Here are the solutions to the two sub-questions.
+  \begin{enumerate}[a. ]
+  \item For every \texttt{j}, when accessing \texttt{a[0][j], a[1][j], ..., a[99][j]}, exactly 50 page faults will happen, because:
+  \begin{itemize}
+  \item When \texttt{i} is even, such as \texttt{a[0][j], a[2][j], ..., a[98][j]}, the accesses are missed and page faults occur;
+  \item When \texttt{i} is odd, such as \texttt{a[1][j], a[3][j], ..., a[99][j]}, the accesses are hit, because when page fault occurs in \texttt{i-1}, we also put the content of \texttt{a[i][j]} into the memory since the page size is $200$.
+  \end{itemize}
+  Therefore, \underline{$50 \times 100 = 5000$ page faults will happen in total}.
+
+  \item For every even \texttt{i}, when accessing \texttt{a[i][0], a[i][1], ..., a[i][99]}, only 1 page fault will happen, because when a page fault happens when accessing \texttt{a[i][0]}, we put \texttt{a[i][0], a[i][1], ..., a[i][99], a[i+1][0], a[i+1][0], ..., a[i+1][99]} in the memory since the page size is $200$. Hence, for every odd \texttt{i}, when accessing the \texttt{a[i][0], a[i][1], ..., a[i][99]}, no page fault will happen because the elements has been fetched when accessing \texttt{a[i-1][0]}. Therefore, \underline{only $50$ page faults will happen in total}.
+  \end{enumerate}
+  \end{solution}
+  \clearpage
+  
+  \item (10.8) Consider the following page reference string:
+  \begin{displaymath}
+  1, 2, 3, 4, 2, 1, 5, 6, 2, 1, 2, 3, 7, 6, 3, 2, 1, 2, 3, 6
+  \end{displaymath}
+  How many page faults would occur for the following replacement algorithms, assuming one, two, three, four, five, six, and seven frames? Remember that all frames are initially empty, so your first unique pages will cost one fault each.
+  \begin{itemize}
+  \item LRU replacement;
+  \item FIFO replacement;
+  \item Optimal replacement.
+  \end{itemize}
+  \begin{solution} Here are the answers to all questions.
+
+    \begin{table}[htbp]
+        \centering
+        \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        Number of frames & LRU replacement & FIFO replacement & Optimal replacement\\
+        \hline
+        1 & $20$ page faults & $20$ page faults & $20$ page faults \\
+        2 & $18$ page faults & $18$ page faults & $15$ page faults \\
+        3 & $15$ page faults & $16$ page faults & $11$ page faults \\
+        4 & $10$ page faults & $14$ page faults & $8$ page faults \\
+        5 & $8$ page faults & $10$ page faults & $7$ page faults \\
+        6 & $7$ page faults & $10$ page faults & $7$ page faults \\
+        7 & $7$ page faults & $7$ page faults & $7$ page faults \\
+        \hline
+        \end{tabular}
+    \end{table}
+
+    Here are some specific explanations. We assume in every hit/miss sequence, the accesses to red-colored, bolded and underlined elements are hit and the others accesses are missed.
+    \begin{itemize}
+    \item \textbf{LRU replacement with 1 frame}: no access is hit, and totally 20 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, 2, 1, 5, 6, 2, 1, 2, 3, 7, 6, 3, 2, 1, 2, 3, 6
+        \end{displaymath}
+    \item \textbf{FIFO replacement with 1 frame}: no access is hit, and totally 20 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, 2, 1, 5, 6, 2, 1, 2, 3, 7, 6, 3, 2, 1, 2, 3, 6
+        \end{displaymath}
+    \item \textbf{Optimal replacement with 1 frame}: no access is hit, and totally 20 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, 2, 1, 5, 6, 2, 1, 2, 3, 7, 6, 3, 2, 1, 2, 3, 6
+        \end{displaymath}
+    \item \textbf{LRU replacement with 2 frames}: 2 accesses are hit, and totally 18 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, 2, 1, 5, 6, 2, 1, {\color{red} \textbf{\underline{2}}}, 3, 7, 6, 3, 2, 1, \textbf{\color{red} \underline{2}}, 3, 6
+        \end{displaymath}
+    \item \textbf{FIFO replacement with 2 frames}: 2 accesses are hit, and totally 18 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, 2, 1, 5, 6, 2, 1, \textbf{\color{red} \underline{2}}, 3, 7, 6, 3, 2, 1, \textbf{\color{red} \underline{2}}, 3, 6
+        \end{displaymath}
+    \item \textbf{Optimal replacement with 2 frames}: 5 accesses are hit, and totally 15 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, 1, 5, 6, \textbf{\color{red} \underline{2}}, 1, \textbf{\color{red} \underline{2}}, 3, 7, 6, \textbf{\color{red} \underline{3}}, 2, 1, \textbf{\color{red} \underline{2}}, 3, 6
+        \end{displaymath}
+    \item \textbf{LRU replacement with 3 frames}: 5 accesses are hit, and totally 15 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, 1, 5, 6, 2, 1, \textbf{\color{red} \underline{2}}, 3, 7, 6, \textbf{\color{red} \underline{3}}, 2, 1, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 6
+        \end{displaymath}
+    \item \textbf{FIFO replacement with 3 frames}: 4 accesses are hit, and totally 16 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, 1, 5, 6, 2, 1, \textbf{\color{red} \underline{2}}, 3, 7, 6, \textbf{\color{red} \underline{3}}, 2, 1, \textbf{\color{red} \underline{2}}, 3, 6
+        \end{displaymath}
+    \item \textbf{Optimal replacement with 3 frames}: 9 accesses are hit, and totally 11 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, 3, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, 2, 1, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 6
+        \end{displaymath}
+    \item \textbf{LRU replacement with 4 frames}: 10 accesses are hit, and totally 10 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, 3, 7, 6, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, 1, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{FIFO replacement with 4 frames}: 6 accesses are hit, and totally 14 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, 2, 1, \textbf{\color{red} \underline{2}}, 3, 7, 6, \textbf{\color{red} \underline{3}}, 2, 1, \textbf{\color{red} \underline{2}}, 3, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{Optimal replacement with 4 frames}: 12 accesses are hit, and totally 8 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, 1, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{LRU replacement with 5 frames}: 12 accesses are hit, and totally 8 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, 3, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{FIFO replacement with 5 frames}: 10 accesses are hit, and totally 10 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, 2, 1, \textbf{\color{red} \underline{2}}, 3, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{Optimal replacement with 5 frames}: 13 accesses are hit, and totally 7 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{LRU replacement with 6 frames}: 13 accesses are hit, and totally 7 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{FIFO replacement with 6 frames}: 10 accesses are hit, and totally 10 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, 1, 2, 3, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{Optimal replacement with 6 frames}: 13 accesses are hit, and totally 7 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{LRU replacement with 7 frames}: 13 accesses are hit, and totally 7 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{FIFO replacement with 7 frames}: 13 accesses are hit, and totally 7 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \item \textbf{Optimal replacement with 7 frames}: 13 accesses are hit, and totally 7 page faults.
+        \begin{displaymath}
+          1, 2, 3, 4, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, 5, 6, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, 7, \textbf{\color{red} \underline{6}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{1}}, \textbf{\color{red} \underline{2}}, \textbf{\color{red} \underline{3}}, \textbf{\color{red} \underline{6}}
+        \end{displaymath}
+    \end{itemize}
+  \end{solution}
+  \clearpage
+  
+  \item (10.9) Consider the following page reference string:
+  \begin{displaymath}
+  7, 2, 3, 1, 2, 5, 3, 4, 6, 7, 7, 1, 0, 5, 4, 6, 2, 3, 0, 1
+  \end{displaymath}
+  Assuming demand paging with three frames, how many page faults would occur for the following replacement algorithms?
+  \begin{itemize}
+  \item LRU replacement;
+  \item FIFO replacement;
+  \item Optimal replacement.
+  \end{itemize}
+  \begin{solution}
+  Here are the answers to all questions.
+  \begin{table}[htbp]
+        \centering
+        \begin{tabular}{|c|c|c|c|}
+        \hline
+        LRU replacement & FIFO replacement & Optimal replacement\\
+        \hline
+        $18$ page faults & $17$ page faults & $13$ page faults \\
+        \hline
+        \end{tabular}
+    \end{table}
+
+    Here are some specific explanations. We assume in every hit/miss sequence, the accesses to red-colored, bolded and underlined elements are hit and the others accesses are missed.    
+    \begin{itemize}
+    \item \textbf{LRU replacement}: 2 accesses are hit, and totally 18 page faults.
+      \begin{displaymath}
+      7, 2, 3, 1, \textbf{\color{red} \underline{2}}, 5, 3, 4, 6, 7, \textbf{\color{red} \underline{7}}, 1, 0, 5, 4, 6, 2, 3, 0, 1
+      \end{displaymath}
+    \item \textbf{FIFO replacement}: 3 accesses are hit, and totally 17 page faults.
+      \begin{displaymath}
+      7, 2, 3, 1, \textbf{\color{red} \underline{2}}, 5, \textbf{\color{red} \underline{3}}, 4, 6, 7, \textbf{\color{red} \underline{7}}, 1, 0, 5, 4, 6, 2, 3, 0, 1
+      \end{displaymath}
+    \item \textbf{Optimal replacement}: 7 accesses are hit, and totally 13 page faults.
+      \begin{displaymath}
+      7, 2, 3, 1, \textbf{\color{red} \underline{2}}, 5, \textbf{\color{red} \underline{3}}, 4, 6, 7, \textbf{\color{red} \underline{7}}, \textbf{\color{red} \underline{1}}, 0, \textbf{\color{red} \underline{5}}, 4, 6, 2, 3, \textbf{\color{red} \underline{0}}, \textbf{\color{red} \underline{1}}
+      \end{displaymath}
+    \end{itemize}
+  \end{solution}
+\end{itemize}
+%========================================================================
+\end{document}

@@ -1,0 +1,373 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\hypersetup{colorlinks=true,linkcolor=black}
+\lstset{
+    basicstyle          =   \ttfamily,          % 基本代码风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt 等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top 上面
+    frame               =   lrtb,   % 显示边框
+}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{exercise}{Exercise}
+\newtheorem*{solution}{Solution}
+\newtheorem*{example}{Example}
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\postscript}[2]
+ {\setlength{\epsfxsize}{#2\hsize}
+  \centerline{\epsfbox{#1}}}
+
+\renewcommand{\baselinestretch}{1.0}
+
+\setlength{\oddsidemargin}{-0.365in}
+\setlength{\evensidemargin}{-0.365in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{10.1in}
+\setlength{\textwidth}{7in}
+\makeatletter \renewenvironment{proof}[1][Proof] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+\makeatletter
+\renewenvironment{solution}[1][Solution] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+
+\begin{document}
+\noindent
+
+%========================================================================
+\noindent\framebox[\linewidth]{\shortstack[c]{
+\Large{\textbf{Homework 08}}\vspace{1mm}\\
+CS307-Operating System (D), Chentao Wu, Spring 2020.}}
+\begin{center}
+\footnotesize{\color{blue}Name: 方泓杰 (Hongjie Fang)  \quad Student ID: 518030910150 \quad Email: galaxies@sjtu.edu.cn}
+\end{center}
+
+\begin{itemize}
+  \item (8.3) Consider the following snapshot of a system:
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[width=3in]{8-3.png}
+    \end{figure}
+
+    Answer the following questions using the banker's algorithm:
+    \begin{enumerate}[a. ]
+    \item What is the content of the matrix \texttt{Need}?
+    \item Is the system in a safe state?
+    \item If a request from thread $T_1$ arrives for $(0, 4, 2, 0)$, can the request be granted immediately?
+    \end{enumerate}
+    \begin{solution}
+    Here are the answers to the sub-questions.
+    \begin{enumerate}[a. ]
+    \item According to the definition of \texttt{Need}, we have the following formula.
+    \begin{displaymath}
+    \texttt{Need} = \texttt{Max} - \texttt{Allocation}
+    \end{displaymath}
+    Therefore, the \texttt{Need} matrix for threads $T_0, T_1, T_2, T_3$ and $T_4$ are $(0,0,0,0)$, $(0,7,5,0)$, $(1,0,0,2)$, $(0,0,2,0)$ and $(0,6,4,2)$ respectively.
+    \item The system is \underline{in a safe state} according to the banker's algorithm. Either $T_0$ or $T_3$ can run with the help of \texttt{Available} resources. Once $T_3$ finishes running, it will release its allocation resources, which allow every other thread to run. The order $(T_0, T_3, T_1, T_2, T_4)$ is a feasible order to arrange the threads to run according to the following analysis.
+
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_0$ & $(1,5,2,0)$ & $(0,0,0,0)$ & $(0,0,1,2)$ & $(1,5,3,2)$  \\
+        $T_3$ & $(1,5,3,2)$ & $(0,0,2,0)$ & $(0,6,3,2)$ & $(1,11,6,4)$ \\
+        $T_1$ & $(1,11,6,4)$ & $(0,7,5,0)$ & $(1,0,0,0)$ & $(2,11,6,4)$ \\
+        $T_2$ & $(2,11,6,4)$ & $(1,0,0,2)$ & $(1,3,5,4)$ & $(3,14,11,8)$ \\
+        $T_4$ & $(3,14,11,8)$ & $(0,6,4,2)$ & $(0,0,1,4)$ & $(3,14,12,12)$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        Therefore, the system is in a safe state.
+    \item The request \underline{can be granted immediately}. If we grant the request immediately, then:
+     \begin{itemize}
+     \item The new \texttt{Available} vector is $(1,1,0,0)$;
+     \item The new \texttt{Allocation} vector for thread $T_1$ is $(1,4,2,0)$;
+     \item The new \texttt{Need} vector for thread $T_1$ is $(0,3,3,0)$.
+     \end{itemize}
+
+     The order $(T_0, T_2, T_1, T_3, T_4)$ is a feasible order to arrange the threads to run according to the following analysis.
+     \clearpage
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_0$ & $(1,1,0,0)$ & $(0,0,0,0)$ & $(0,0,1,2)$ & $(1,1,1,2)$  \\
+        $T_2$ & $(1,1,1,2)$ & $(1,0,0,2)$ & $(1,3,5,4)$ & $(2,4,6,6)$ \\
+        $T_1$ & $(2,4,6,6)$ & $(0,3,3,0)$ & $(1,4,2,0)$ & $(3,8,8,6)$ \\
+        $T_3$ & $(3,8,8,6)$ & $(0,0,2,0)$ & $(0,6,3,2)$ & $(3,14,11,8)$ \\
+        $T_4$ & $(3,14,11,8)$ & $(0,6,4,2)$ & $(0,0,1,4)$ & $(3,14,12,12)$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+     Therefore, the request can be granted immediately.
+    \end{enumerate}
+    \end{solution}
+
+    \clearpage
+  \item (8.9) Consider the following snapshot of a system:
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[width=2in]{8-9.png}
+    \end{figure}
+    Using the banker's algorithm, determine whether or not each of the following state is unsafe. If the state is safe, illustrate the order in which the threads may complete. Otherwise, illustrate why the state is unsafe.
+    \begin{enumerate}[a. ]
+    \item \texttt{Available} = $(0,3,0,1)$
+    \item \texttt{Available} = $(1,0,0,2)$
+    \end{enumerate}
+    \begin{solution}
+    According to the definition of \texttt{Need}, we have the following formula.
+    \begin{displaymath}
+    \texttt{Need} = \texttt{Max} - \texttt{Allocation}
+    \end{displaymath}
+    Therefore, the \texttt{Need} matrix for threads $T_0, T_1, T_2, T_3$ and $T_4$ are $(2,1,0,3)$, $(1,0,0,1)$, $(0,2,0,0)$, $(4,1,0,2)$ and $(2,1,1,3)$ respectively.
+    \begin{enumerate}[a. ]
+    \item The state is \underline{unsafe}. After finishing running $T_2$, $T_1$ and $T_3$, the available resources is unable to support either $T_0$ and $T_4$ to run because the available instances in resource $D$ is only $2$ but both thread $T_0$ and $T_3$ need $3$. The detailed information is in the table below.
+
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_2$ & $(0,3,0,1)$ & $(0,2,0,0)$ & $(3,1,2,1)$ & $(3,4,2,2)$ \\
+        $T_1$ & $(3,4,2,2)$ & $(1,0,0,1)$ & $(2,2,1,0)$ & $(5,6,3,2)$ \\
+        $T_3$ & $(5,6,3,2)$ & $(4,1,0,2)$ & $(0,5,1,0)$ & $(5,11,4,2)$ \\
+        \textbf{Deadlock} & $(5,11,4,2)$ & $\cdots$ & $\cdots$ & $\cdots$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        Therefore, the state is unsafe.
+    \item The state is \underline{safe}. The order $(T_1,T_2,T_0,T_3,T_4)$ is a feasible order according to the following analysis.
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_1$ & $(1,0,0,2)$ & $(1,0,0,1)$ & $(2,2,1,0)$ & $(3,2,1,2)$ \\
+        $T_2$ & $(3,2,1,2)$ & $(0,2,0,0)$ & $(3,1,2,1)$ & $(6,3,3,3)$ \\
+        $T_0$ & $(6,3,3,3)$ & $(2,1,0,3)$ & $(3,0,1,4)$ & $(9,3,4,7)$ \\
+        $T_3$ & $(9,3,4,7)$ & $(4,1,0,2)$ & $(0,5,1,0)$ & $(9,8,5,7)$ \\
+        $T_4$ & $(9,8,5,7)$ & $(2,1,1,3)$ & $(4,2,1,2)$ & $(13,10,6,9)$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        Therefore, the state is safe.
+    \end{enumerate}
+    \end{solution}
+    \clearpage
+
+  \item (8.18) Which of the six resource-allocation graphs shown in Fig. \ref{fig1} illustrate deadlock? For those situations that are deadlocked, provide the cycle of threads and resources. Where there is not a deadlock situation, illustrate the order in which the threads may complete execution.
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[width=4in]{8-18.png}\\
+      \caption{Resource-allocation graphs}\label{fig1}
+    \end{figure}
+    \begin{solution}
+    Here are the answers to the sub-questions.
+    \begin{enumerate}[a. ]
+    \item \underline{No deadlock}. A feasible order of execution is $(T_2, T_3, T_1)$.
+    \item \underline{Deadlock}. The cycle of threads and resources is $R_1 \rightarrow T_1 \rightarrow R_3 \rightarrow T_3 \rightarrow R_1$, which forms a deadlock.
+    \item \underline{No deadlock}. A feasible order of execution is $(T_2, T_3, T_1)$.
+    \item \underline{Deadlock}. The cycles of threads and resources are $R_1 \rightarrow T_1 \rightarrow R_2 \rightarrow T_3 \rightarrow R_1$ and $R_1 \rightarrow T_2 \rightarrow R_2 \rightarrow T_4 \rightarrow R_1$, which form a deadlock.
+    \item \underline{No deadlock}. A feasible order of execution is $(T_2, T_1, T_3, T_4)$.
+    \item \underline{No deadlock}. A feasible order of execution is $(T_2, T_4, T_1, T_3)$.
+    \end{enumerate}
+    \end{solution}
+    \clearpage
+
+  \item (8.27) Consider the following snapshot of a system:
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[width=3in]{8-27.png}
+    \end{figure}
+
+    Using the banker's algorithm, determine whether or not each of the following state is unsafe. If the state is safe, illustrate the order in which the threads may complete. Otherwise, illustrate why the state is unsafe.
+    \begin{enumerate}[a. ]
+    \item \texttt{Available} = $(2,2,2,3)$
+    \item \texttt{Available} = $(4,4,1,1)$
+    \item \texttt{Available} = $(3,0,1,4)$
+    \item \texttt{Available} = $(1,5,2,2)$
+    \end{enumerate}
+    \begin{solution}
+    According to the definition of \texttt{Need}, we have the following formula.
+    \begin{displaymath}
+    \texttt{Need} = \texttt{Max} - \texttt{Allocation}
+    \end{displaymath}
+    Therefore, the \texttt{Need} matrix for threads $T_0, T_1, T_2, T_3$ and $T_4$ are $(3,1,1,4)$, $(2,3,1,2)$, $(2,4,1,1)$, $(1,4,2,2)$ and $(2,1,1,1)$ respectively.
+    \begin{enumerate}[a. ]
+    \item The state is \underline{safe}. The order $(T_4,T_0,T_1,T_2,T_3)$ is a feasible order according to the following analysis.
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_4$ & $(2,2,2,3)$ & $(2,1,1,1)$ & $(1,0,0,1)$ & $(3,2,2,4)$ \\
+        $T_0$ & $(3,2,2,4)$ & $(3,1,1,4)$ & $(1,2,0,2)$ & $(4,4,2,6)$ \\
+        $T_1$ & $(4,4,2,6)$ & $(2,3,1,2)$ & $(0,1,1,2)$ & $(4,5,3,8)$ \\
+        $T_2$ & $(4,5,3,8)$ & $(2,4,1,1)$ & $(1,2,4,0)$ & $(5,7,7,8)$ \\
+        $T_3$ & $(5,7,7,8)$ & $(1,4,2,2)$ & $(1,2,0,1)$ & $(6,9,7,9)$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        Therefore, the state is safe.
+    \item The state is \underline{safe}. The order $(T_4,T_2,T_1,T_0,T_3)$ is a feasible order according to the following analysis.
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_4$ & $(4,4,1,1)$ & $(2,1,1,1)$ & $(1,0,0,1)$ & $(5,4,1,2)$ \\
+        $T_2$ & $(5,4,1,2)$ & $(2,4,1,1)$ & $(1,2,4,0)$ & $(6,6,5,2)$ \\
+        $T_1$ & $(6,6,5,2)$ & $(2,3,1,2)$ & $(0,1,1,2)$ & $(6,7,6,4)$ \\
+        $T_0$ & $(6,7,6,4)$ & $(3,1,1,4)$ & $(1,2,0,2)$ & $(7,9,6,6)$ \\
+        $T_3$ & $(7,9,6,6)$ & $(1,4,2,2)$ & $(1,2,0,1)$ & $(8,11,6,7)$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        Therefore, the state is safe.
+    \item The state is \underline{unsafe}. We cannot finish any thread only using the current available resources, since there is no instance of resource B left and each thread needs at least one instance of resource B to run. Therefore, the state is unsafe.
+    \clearpage
+    \item The state is \underline{safe}. The order $(T_3, T_4, T_2, T_1, T_0)$ is a feasible order according to the following analysis.
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_3$ & $(1,5,2,2)$ & $(1,4,2,2)$ & $(1,2,0,1)$ & $(2,7,2,3)$ \\
+        $T_4$ & $(2,7,2,3)$ & $(2,1,1,1)$ & $(1,0,0,1)$ & $(3,7,2,4)$ \\
+        $T_2$ & $(3,7,2,4)$ & $(2,4,1,1)$ & $(1,2,4,0)$ & $(4,9,6,4)$ \\
+        $T_1$ & $(4,9,6,4)$ & $(2,3,1,2)$ & $(0,1,1,2)$ & $(4,10,7,6)$ \\
+        $T_0$ & $(4,10,7,6)$ & $(3,1,1,4)$ & $(1,2,0,2)$ & $(5,12,7,8)$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+    \end{enumerate}
+    \end{solution}
+    \clearpage
+
+  \item (8.28) Consider the following snapshot of a system:
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[width=4.5in]{8-28.png}
+    \end{figure}
+
+    Answer the following questions using the banker's algorithm:
+    \begin{enumerate}
+    \item Illustrate that the system is in a safe state by demonstrating an order in which the threads may complete.
+    \item If a request from thread $T_4$ arrives for $(2,2,2,4)$, can the request be granted immediately?
+    \item If a request from thread $T_2$ arrives for $(0,1,1,0)$, can the request be granted immediately?
+    \item If a request from thread $T_3$ arrives for $(2,2,1,2)$, can the request be granted immediately?
+    \end{enumerate}
+    \begin{solution}
+    According to the definition of \texttt{Need}, we have the following formula.
+    \begin{displaymath}
+    \texttt{Need} = \texttt{Max} - \texttt{Allocation}
+    \end{displaymath}
+    Therefore, the \texttt{Need} matrix for threads $T_0, T_1, T_2, T_3$ and $T_4$ are $(3,3,3,2)$, $(2,1,3,0)$, $(0,1,2,0)$, $(2,2,2,2)$ and $(3,4,5,4)$ respectively.
+    \begin{enumerate}[a. ]
+    \item The system is \underline{in a safe state}. The order $(T_2,T_0,T_1,T_3,T_4)$ is a feasible order according to the following analysis.
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_2$ & $(2,2,2,4)$ & $(0,1,2,0)$ & $(2,4,1,3)$ & $(4,6,3,7)$ \\
+        $T_0$ & $(4,6,3,7)$ & $(3,3,3,2)$ & $(3,1,4,1)$ & $(7,7,7,8)$ \\
+        $T_1$ & $(7,7,7,8)$ & $(2,1,3,0)$ & $(2,1,0,2)$ & $(9,8,7,10)$ \\
+        $T_3$ & $(9,8,7,10)$ & $(2,2,2,2)$ & $(4,1,1,0)$ & $(13,9,8,10)$ \\
+        $T_4$ & $(13,9,8,10)$ & $(3,4,5,4)$ & $(2,2,2,1)$ & $(15,11,10,11)$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        Therefore, the system is in a safe state.
+    \item The request \underline{can not be granted immediately}. If we grant the request, the \texttt{Available} vector will become $(0,0,0,0)$, which means there is no available resources. What's more, thread $T_4$ still can not finish running after receiving the resources. So there is no thread that can be executed currently, which means the system is in an unsafe state. Therefore, The request can not be granted immediately.
+    \item The request \underline{can be granted immediately}. If we grant the request immediately, then:
+     \begin{itemize}
+     \item The new \texttt{Available} vector is $(2,1,1,4)$;
+     \item The new \texttt{Allocation} vector for thread $T_2$ is $(2,5,2,3)$;
+     \item The new \texttt{Need} vector for thread $T_2$ is $(0,0,1,0)$.
+     \end{itemize}
+     The order $(T_2,T_0,T_1,T_3,T_4)$ is still a feasible order according to the following analysis.
+     \clearpage
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_2$ & $(2,1,1,4)$ & $(0,0,1,0)$ & $(2,5,2,3)$ & $(4,6,3,7)$ \\
+        $T_0$ & $(4,6,3,7)$ & $(3,3,3,2)$ & $(3,1,4,1)$ & $(7,7,7,8)$ \\
+        $T_1$ & $(7,7,7,8)$ & $(2,1,3,0)$ & $(2,1,0,2)$ & $(9,8,7,10)$ \\
+        $T_3$ & $(9,8,7,10)$ & $(2,2,2,2)$ & $(4,1,1,0)$ & $(13,9,8,10)$ \\
+        $T_4$ & $(13,9,8,10)$ & $(3,4,5,4)$ & $(2,2,2,1)$ & $(15,11,10,11)$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        Therefore, the request can be granted immediately.
+    \item The request \underline{can be granted immediately}. If we grant the request immediately, then:
+     \begin{itemize}
+     \item The new \texttt{Available} vector is $(0,0,1,2)$;
+     \item The new \texttt{Allocation} vector for thread $T_2$ is $(6,3,2,2)$;
+     \item The new \texttt{Need} vector for thread $T_2$ is $(0,0,1,0)$.
+     \end{itemize}
+     The order $(T_3,T_0,T_1,T_2,T_4)$ is a feasible order according to the following analysis.
+        \begin{table}[h]
+        \centering
+        \begin{tabular}{cccccc}
+        \hline
+        Thread Order & \texttt{Available} (before) & \texttt{Need} & \texttt{Allocation} & \texttt{Available} (after)  \\
+        \hline
+        $T_3$ & $(0,0,1,2)$ & $(0,0,1,0)$ & $(6,3,2,2)$ & $(6,3,3,4)$ \\
+        $T_0$ & $(6,3,3,4)$ & $(3,3,3,2)$ & $(3,1,4,1)$ & $(9,4,7,5)$ \\
+        $T_1$ & $(9,4,7,5)$ & $(2,1,3,0)$ & $(2,1,0,2)$ & $(11,5,7,7)$ \\
+        $T_2$ & $(11,5,7,7)$ & $(0,1,2,0)$ & $(2,4,1,3)$ & $(13,9,8,10)$ \\
+        $T_4$ & $(13,9,8,10)$ & $(3,4,5,4)$ & $(2,2,2,1)$ & $(15,11,10,11)$ \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        Therefore, the request can be granted immediately.
+    \end{enumerate}
+    \end{solution}
+\end{itemize}
+
+%========================================================================
+\end{document}

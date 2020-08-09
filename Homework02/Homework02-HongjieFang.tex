@@ -1,0 +1,78 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,linesnumbered]{algorithm2e}
+\hypersetup{colorlinks=true,linkcolor=black}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{exercise}{Exercise}
+\newtheorem*{solution}{Solution}
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcommand{\postscript}[2]
+ {\setlength{\epsfxsize}{#2\hsize}
+  \centerline{\epsfbox{#1}}}
+
+\renewcommand{\baselinestretch}{1.0}
+
+\setlength{\oddsidemargin}{-0.365in}
+\setlength{\evensidemargin}{-0.365in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{10.1in}
+\setlength{\textwidth}{7in}
+\makeatletter \renewenvironment{proof}[1][Proof] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+\makeatletter
+\renewenvironment{solution}[1][Solution] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse} \makeatother
+
+\begin{document}
+\noindent
+
+%========================================================================
+\noindent\framebox[\linewidth]{\shortstack[c]{
+\Large{\textbf{Homework 02}}\vspace{1mm}\\
+CS307-Operating System (D), Chentao Wu, Spring 2020.}}
+\begin{center}
+\footnotesize{\color{blue}Name: ·½γό½ά (Hongjie Fang)  \quad Student ID: 518030910150 \quad Email: galaxies@sjtu.edu.cn}
+\end{center}
+
+\begin{itemize}
+    \item (2.2) What is the purpose of the command interpreter? Why is it usually separate from the kernel?
+    \begin{solution}
+        The \textbf{purpose} of the command interpreter is to allow users to directly enter commands to be performed by the operating system. It reads commands from users or a file consists of commands, and executes them by transforming the commands to some system calls usually. 
+        
+        The command interpreter is an \textbf{interface} between users and operating system. To \textbf{protect the kernel} from some dangerous instructions which users may enter, the command interpreter should be separate from the kernel most of the time.
+    \end{solution}
+    
+    \item (2.5) What is the main advantage of the layered approach to system design? What are the disadvantages of the layered approach?
+    \begin{solution}
+        The main \textbf{advantage} of the layered approach is \textbf{simplicity of construction and debugging}. We can simplify the process of constructing and debugging by following the order of the layer number. And modifications in a layer only affect a few other layers, so it's easy to make modifications.
+        
+        The \textbf{disadvantages} of the layered approach is as follows:
+        \begin{itemize}
+        \item It's hard to define the functionality of each layer appropriately.
+        \item The overall performance of such systems is poor, because of the overhead of requiring a user program to traverse through multiple layers to obtain an operating-system service.
+        \end{itemize}
+    \end{solution}
+    
+    \item (2.7) Why do some systems store the operating system in firmware, while others store it on disk?
+    \begin{solution}
+        A disk along with a file system may \textbf{not} be \textbf{available} in some systems, so the operating system has to be stored in the firmware under this circumstance.
+    \end{solution}
+\end{itemize}
+%========================================================================
+\end{document}
